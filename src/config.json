@@ -1,0 +1,8 @@
+{
+    "CLIENT_ID" : "",
+    "CLIENT_SECRET" : "",
+    "REDIRECT_URI" : "http://localhost:3000/host",
+    "DEVICE_ID_MY_COMP" : "", 
+    "TOTAL_DISPLAYED_SONGS" : 20,
+    "TOTAL_REFRESH_ATTEMPTS" : 3
+}
