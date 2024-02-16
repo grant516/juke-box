@@ -13,6 +13,7 @@ function Host() {
 
   // TODO: May not need these since I could just save the information straight
   // into the database. But it could be nice to have these variables.
+  const [accessToken, setAccessToken] = useState("");
   const [queueAccessToken, setQueueAccessToken] = useState("");
   const [queueRefreshToken, setQueueRefreshToken] = useState("");
 
@@ -28,7 +29,36 @@ function Host() {
 
       genCode();
     }, 0);
+
+    var authParameters = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'grant_type=client_credentials&client_id=' + config.CLIENT_ID + '&client_secret=' + config.CLIENT_SECRET + '&scope=user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private'
+    }
+    fetch('https://accounts.spotify.com/api/token', authParameters)
+      .then(result => result.json())
+      .then(data => setAccessToken(data.access_token))
   }, []);
+
+  /****************************************************************************
+  * Generate Random Code
+  * This code generates a random 6 character code that will allow me to 
+  * access the information in the database when others join the host's
+  * session.
+  ****************************************************************************/
+  const generateRandomCode = async () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let generatedCode = '';
+  
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      generatedCode += characters.charAt(randomIndex);
+    }
+  
+    setHostCode(generatedCode);
+  };
 
   /********************************************
   * Start of getAccessToken
@@ -72,7 +102,8 @@ function Host() {
               {
                 setDoc(doc(codesCollectionRef, hostCode), 
                 {queueAccessToken: queue, 
-                queueRefreshToken: queueR});
+                queueRefreshToken: queueR,
+                accessToken: accessToken});
 
                 setTokenRetrieved(true);
               }
@@ -87,26 +118,6 @@ function Host() {
   /********************************************
   * End of getAccessToken
   *********************************************/
-
-  /*
-  * Generate Random Code
-  * This code generates a random 6 character code that will allow me to 
-  * access the information in the database when others join the host's
-  * session.
-  */
-  const generateRandomCode = async () => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let generatedCode = '';
-  
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      generatedCode += characters.charAt(randomIndex);
-    }
-  
-    setHostCode(generatedCode);
-  };
-
-
 
   if(!tokenRetrieved) {
     return (
