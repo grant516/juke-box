@@ -1,3 +1,5 @@
+import './Join.css';
+import logo from "../images/JukeBox_Logo.png";
 import React, { useState } from 'react'
 import { getDoc, collection , doc } from 'firebase/firestore'
 import {db} from "../firebase-config"
@@ -140,7 +142,6 @@ async function refreshQueueAccessToken(){
   const body = await fetch(url, authOptions)
     .then(result => result.json())
     .then(result => {
-      //console.log(result);
       setQueueAccessToken(result.access_token);
     })
     .catch(error => {
@@ -180,16 +181,22 @@ async function refreshQueueAccessToken(){
   if(queueAccessToken === "" && queueRefreshToken === "")
   {
     return (
-      <div>
-        {/* Text input */}
-        <input
-          type="text"
-          value={code}
-          onChange={handleInputChange}
-          placeholder="Enter text..."
-        />
-        {/* Button */}
-        <button onClick={getHost}>Submit</button>
+      <div id='joinPage'>
+        <div className='codeInput'>
+            <img className='image' src={logo} />
+          
+            {/* Text input */}
+            <input
+            className='codeTextBox'
+              type="text"
+              value={code}
+              onChange={handleInputChange}
+              placeholder="Enter Host Code..."
+            />
+            {/* Button */}
+            <button id='searchButton' onClick={getHost}>Submit</button>
+          
+        </div>
       </div>
     )
   }
@@ -198,8 +205,8 @@ async function refreshQueueAccessToken(){
     return (
       <div className="App">
         <Container>
-          <InputGroup className='mb-3' size="lg">
-            <FormControl
+          <InputGroup size="lg">
+            <FormControl className='songSearch'
             placeholder='Search For Songs'
             type="input"
             onKeyPress={event => {
@@ -211,7 +218,7 @@ async function refreshQueueAccessToken(){
             />
             <Button onClick={event => {
               search();
-            }}>
+            }} id='searchButton'>
               Search
             </Button>
           </InputGroup>
@@ -220,8 +227,8 @@ async function refreshQueueAccessToken(){
           <Row className='mx-2 row row-cols-4'>
             {top10Tracks.map( (song, i) => {
               return (
-                <Card onClick={() => onClicked(song)} style={{ cursor: "pointer" }}>
-                  <Card.Img src={song.album.images[0].url} />
+                <Card className='songCard' onClick={() => onClicked(song)} style={{ cursor: "pointer" }}>
+                  <Card.Img className='songCardImage' src={song.album.images[0].url} />
                   <Card.Body>
                     <Card.Title>{song.name}</Card.Title>  
                     <Card.Text>{artistName(song)}</Card.Text>

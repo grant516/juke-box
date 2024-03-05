@@ -1,8 +1,8 @@
 {
-    "CLIENT_ID" : "",
-    "CLIENT_SECRET" : "",
+    "CLIENT_ID" : "f840601c239743cabda4415edeb310d2",
+    "CLIENT_SECRET" : "f1bd98b65aed4f2aa6e539f79645acfb",
     "REDIRECT_URI" : "http://localhost:3000/host",
-    "DEVICE_ID_MY_COMP" : "", 
+    "DEVICE_ID_MY_COMP" : "0e8a753c753d9cfe4926eb142358ca7e11de7dcf", 
     "TOTAL_DISPLAYED_SONGS" : 20,
     "TOTAL_REFRESH_ATTEMPTS" : 3
 }

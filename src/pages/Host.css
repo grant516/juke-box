@@ -1,0 +1,29 @@
+body {
+    background-color: #2c2e2c;
+}
+
+div {
+    display: block;
+    /* display: flex; */
+    text-align:center;
+    justify-content: center;
+}
+
+.createButton {
+    background-color:#71e061;
+    color: #2c2e2c;
+    border: 2px solid #2c2e2c;
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-size: 16px;
+}
+
+.createButton:hover {
+    background-color:#2c2e2c;
+    color: #71e061;
+    border: 2px solid #71e061;
+}
+
+.hostCode {
+    color: #71e061;
+}

@@ -1,3 +1,4 @@
+import './Host.css';
 import React, { useEffect, useState } from 'react'
 import {setDoc, collection, doc} from 'firebase/firestore'
 import {db} from "../firebase-config"
@@ -124,7 +125,7 @@ function Host() {
       <div>
         <Button onClick={event => {
               getAccessToken();
-            }}>
+            }} className='createButton'>
               Create Shared Playlist
             </Button>
       </div>
@@ -133,11 +134,7 @@ function Host() {
   else {
     return (
       <div>
-        <h2>Here is Your Host Code: {hostCode}</h2>
-        <Button onClick={event => {
-            }}>
-              This Button does nothing :D
-            </Button>
+        <h2 className='hostCode'>Here is Your Host Code: {hostCode}</h2>
       </div>
     )
   }
