@@ -1,6 +1,6 @@
 import './Join.css';
 import logo from "../images/JukeBox_Logo.png";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getDoc, collection , doc } from 'firebase/firestore'
 import {db} from "../firebase-config"
 import config from "../config.json";
@@ -18,6 +18,15 @@ function Join() {
   const [accessToken, setAccessToken] = useState("");
 
   const [refreshAttempt, setrefreshAttempt] = useState(0);
+  const [hostCode, setHostCode] = useState("");
+
+  useEffect(() => {
+    let fullURL = window.location.href;
+    let startIndex = fullURL.indexOf("data=");
+    if(startIndex >= 0) {
+      setCode(fullURL.substring(startIndex + "data=".length));
+    }
+  })
 
   const handleInputChange = (event) => {
     setCode(event.target.value);

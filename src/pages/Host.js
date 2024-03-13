@@ -1,5 +1,6 @@
 import './Host.css';
 import React, { useEffect, useState } from 'react'
+import QRCode from 'qrcode.react';
 import {setDoc, collection, doc} from 'firebase/firestore'
 import {db} from "../firebase-config"
 import config from "../config.json";
@@ -11,10 +12,12 @@ function Host() {
 
   const codesCollectionRef = collection(db, "code");
   const [tokenRetrieved, setTokenRetrieved] = useState(false);
+  const [product, setProduct] = useState("");
 
   // TODO: May not need these since I could just save the information straight
   // into the database. But it could be nice to have these variables.
   const [accessToken, setAccessToken] = useState("");
+  const [accessGetToken, setAccessGetToken] = useState("");
   const [queueAccessToken, setQueueAccessToken] = useState("");
   const [queueRefreshToken, setQueueRefreshToken] = useState("");
 
@@ -31,17 +34,51 @@ function Host() {
       genCode();
     }, 0);
 
+    /*
+    * This code gets the access token for the api request. 
+    */
+
+
     var authParameters = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        //'Authorization': 'Basic ' + base64AuthString
       },
-      body: 'grant_type=client_credentials&client_id=' + config.CLIENT_ID + '&client_secret=' + config.CLIENT_SECRET + '&scope=user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private'
+      body: 'grant_type=client_credentials&client_id=' + 
+      //body: 'grant_type=authorization_code&client_id=' +
+      config.CLIENT_ID + '&client_secret=' + config.CLIENT_SECRET + '&scope=user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private'
     }
     fetch('https://accounts.spotify.com/api/token', authParameters)
       .then(result => result.json())
-      .then(data => setAccessToken(data.access_token))
+      .then(data => {
+        setAccessToken(data.access_token);
+      })
+
   }, []);
+
+  /****************************************************************************
+  * Get Product Information
+  * This function grabs the Membership information from the user so we can 
+  * determine if they can host the shared playlist.
+  ****************************************************************************/
+  const getProductInfo = async () => {
+
+    var searchParameters = {
+      methods: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + accessGetToken
+      }
+    }
+  
+    var returnedSongs = await fetch('https://api.spotify.com/v1/me' , searchParameters)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+  }
+
 
   /****************************************************************************
   * Generate Random Code
@@ -120,10 +157,19 @@ function Host() {
   * End of getAccessToken
   *********************************************/
 
+  /********************************************
+  * QR Code datamaker 
+  *********************************************/
+  const generateQRcodeURL = () => {
+    // Modify this URL as needed
+    return `${config.JOIN_REDIRECT_URI}` + `?data=${hostCode}`;
+  };
+
   if(!tokenRetrieved) {
     return (
       <div>
         <Button onClick={event => {
+              //getProductInfo();
               getAccessToken();
             }} className='createButton'>
               Create Shared Playlist
@@ -134,7 +180,9 @@ function Host() {
   else {
     return (
       <div>
-        <h2 className='hostCode'>Here is Your Host Code: {hostCode}</h2>
+        <h2 id='hostText'>Here is Your Host Code: {hostCode}</h2>
+        <h3 id='hostText'>Have those who want to join scan the QR code below:</h3>
+        <QRCode fgColor="#71e061" bgColor="#2c2e2c" value={generateQRcodeURL()} />
       </div>
     )
   }
