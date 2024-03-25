@@ -125,41 +125,41 @@ function Join() {
         }
     }
   }
-  /****************************************************************************
+  /********************************************
    * End of addToQueue
-  ****************************************************************************/
+  ********************************************/
 
-/********************************************
+  /********************************************
   * Beginning of refresh Queue Access Token
   *********************************************/
-async function refreshQueueAccessToken(){
-  // refresh token that has been previously stored
-  const refreshToken = queueRefreshToken;
-  const url = "https://accounts.spotify.com/api/token";
+  async function refreshQueueAccessToken(){
+    // refresh token that has been previously stored
+    const refreshToken = queueRefreshToken;
+    const url = "https://accounts.spotify.com/api/token";
 
-  var authOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: 'grant_type=refresh_token' + 
-    '&client_id=' + config.CLIENT_ID + 
-    '&client_secret=' + config.CLIENT_SECRET + 
-    '&refresh_token=' + refreshToken
+    var authOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'grant_type=refresh_token' + 
+      '&client_id=' + config.CLIENT_ID + 
+      '&client_secret=' + config.CLIENT_SECRET + 
+      '&refresh_token=' + refreshToken
+    }
+
+    const body = await fetch(url, authOptions)
+      .then(result => result.json())
+      .then(result => {
+        setQueueAccessToken(result.access_token);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
-
-  const body = await fetch(url, authOptions)
-    .then(result => result.json())
-    .then(result => {
-      setQueueAccessToken(result.access_token);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-}
-/********************************************
-* End of refresh Queue Access Token
-*********************************************/
+  /********************************************
+  * End of refresh Queue Access Token
+  *********************************************/
 
   /****************************************************************************
   * Artist Name
