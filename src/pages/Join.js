@@ -18,7 +18,6 @@ function Join() {
   const [accessToken, setAccessToken] = useState("");
 
   const [refreshAttempt, setrefreshAttempt] = useState(0);
-  const [hostCode, setHostCode] = useState("");
 
   useEffect(() => {
     let fullURL = window.location.href;
@@ -38,8 +37,6 @@ function Join() {
       const codeRef = doc(db, "code", code);
       const data = await getDoc(codeRef);
       let val = data.data();
-      console.log("data: ")
-      console.log(data.data());
       setQueueAccessToken(val.queueAccessToken);
       setQueueRefreshToken(val.queueRefreshToken);
       setAccessToken(val.accessToken);
@@ -65,19 +62,48 @@ function Join() {
       methods: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + accessToken
+        'Authorization': 'Bearer ' + queueAccessToken
       }
     }
   
-    var returnedSongs = await fetch('https://api.spotify.com/v1/search?q=' +
+    let badStatus = false;
+    await fetch('https://api.spotify.com/v1/search?q=' +
                         searchInput + '&type=track' + 
                         '&market=US&limit=' + 
                         config.TOTAL_DISPLAYED_SONGS, searchParameters)
-    .then(response => response.json())
-    .then(data => {
-  
-      setTopTracks(data.tracks.items);
+    .then(response => {
+      if(response.status === 401) {
+        badStatus = true;
+      }
     })
+    .catch(err => console.error('error:' + err))
+
+    if(!badStatus) {
+      var returnedSongs = await fetch('https://api.spotify.com/v1/search?q=' +
+                          searchInput + '&type=track' + 
+                          '&market=US&limit=' + 
+                          config.TOTAL_DISPLAYED_SONGS, searchParameters)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setTopTracks(data.tracks.items);
+      })
+      .catch(err => console.error('error:' + err))
+    }
+
+    if(badStatus && refreshAttempt < config.TOTAL_REFRESH_ATTEMPTS)
+        {
+          console.log("bad status, requesting new token")
+          await refreshQueueAccessToken();
+          // We want to avoid an infinite loop
+          await search();
+          setrefreshAttempt(refreshAttempt + 1);
+        }
+        else if(!badStatus)
+        {
+          console.log("good status");
+          setrefreshAttempt(0);
+        }
   }
 
   /****************************************************************************
@@ -107,8 +133,7 @@ function Join() {
             badStatus = true;
           }
         })
-        .then(res => res.json())
-        .then(json => console.log(json + "This is where I'm at"))
+        //.then(res => res.json())
         .catch(err => console.error('error:' + err));
 
         if(badStatus && refreshAttempt < config.TOTAL_REFRESH_ATTEMPTS)
@@ -151,7 +176,10 @@ function Join() {
     const body = await fetch(url, authOptions)
       .then(result => result.json())
       .then(result => {
+        console.log("below is result for refresh");
+        console.log(result);
         setQueueAccessToken(result.access_token);
+        console.log(result.access_token);
       })
       .catch(error => {
         console.error('Error:', error);

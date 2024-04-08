@@ -59,6 +59,8 @@ function Host() {
     fetch('https://accounts.spotify.com/api/token', authParameters)
       .then(result => result.json())
       .then(data => {
+        console.log("log in data:")
+        console.log(data);
         setAccessToken(data.access_token);
       })
 
@@ -173,6 +175,7 @@ function Host() {
         fetch('https://accounts.spotify.com/api/token', authOptions)
             .then(result => result.json())
             .then(result => {
+              console.log("result below: ")
               console.log(result);
               queueR = result.refresh_token;
               queue = result.access_token;
