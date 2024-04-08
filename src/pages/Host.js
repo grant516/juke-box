@@ -59,8 +59,6 @@ function Host() {
     fetch('https://accounts.spotify.com/api/token', authParameters)
       .then(result => result.json())
       .then(data => {
-        console.log("log in data:")
-        console.log(data);
         setAccessToken(data.access_token);
       })
 
@@ -83,7 +81,6 @@ function Host() {
     fetch('https://api.spotify.com/v1/me', searchParameters)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       if(data.product === 'premium'){
         setProduct(true);
       }
@@ -111,11 +108,9 @@ function Host() {
   async function boolUserProfile() {
     if(!productTokenRetrieved) {
       await userProfile();
-      console.log('if statement: ' + product);
       return false;
     }
     else {
-      console.log('else statement: ' + product);
       return false;
     }
   }
@@ -175,8 +170,6 @@ function Host() {
         fetch('https://accounts.spotify.com/api/token', authOptions)
             .then(result => result.json())
             .then(result => {
-              console.log("result below: ")
-              console.log(result);
               queueR = result.refresh_token;
               queue = result.access_token;
               setQueueRefreshToken(result.refresh_token); 
@@ -219,7 +212,6 @@ function Host() {
     fetch('https://api.spotify.com/v1/me/player/recently-played', searchParameters)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       setPastSongs(data.items);
     })
   }

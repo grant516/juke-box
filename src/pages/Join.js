@@ -85,7 +85,6 @@ function Join() {
                           config.TOTAL_DISPLAYED_SONGS, searchParameters)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setTopTracks(data.tracks.items);
       })
       .catch(err => console.error('error:' + err))
@@ -93,7 +92,6 @@ function Join() {
 
     if(badStatus && refreshAttempt < config.TOTAL_REFRESH_ATTEMPTS)
         {
-          console.log("bad status, requesting new token")
           await refreshQueueAccessToken();
           // We want to avoid an infinite loop
           await search();
@@ -101,7 +99,6 @@ function Join() {
         }
         else if(!badStatus)
         {
-          console.log("good status");
           setrefreshAttempt(0);
         }
   }
@@ -123,8 +120,6 @@ function Join() {
       let url = 'https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A'
       + songId + '&device_id=' + config.DEVICE_ID_MY_COMP;
 
-      console.log(url);
-
       let badStatus = false;
       await fetch(url, options)
         .then(res => {
@@ -145,7 +140,6 @@ function Join() {
         }
         else if(!badStatus)
         {
-          console.log("good status");
           setrefreshAttempt(0);
         }
     }
@@ -176,10 +170,7 @@ function Join() {
     const body = await fetch(url, authOptions)
       .then(result => result.json())
       .then(result => {
-        console.log("below is result for refresh");
-        console.log(result);
         setQueueAccessToken(result.access_token);
-        console.log(result.access_token);
       })
       .catch(error => {
         console.error('Error:', error);
